@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__.'/ErrorCode.php';
+require_once __DIR__.'/ErrorCode.php';
 
 /**
  * 用户类
@@ -45,7 +45,9 @@ class User
         $stmt = $this->_db->prepare( $sql );
         $stmt->bindParam( ':username', $username );
         $stmt->bindParam( ':password', $password );
-        $stmt->execute();
+        if ( ! $stmt->execute() ) {
+            throw new Exception( '服务器内部错误', ErrorCode::SERVER_INTERNAL_ERROR );
+        }
         $user = $stmt->fetch( PDO::FETCH_ASSOC );
         if ( empty( $user ) ) { // 查询结果判断
             throw new Exception( '用户名或密码错误', ErrorCode::LOGIN_FAIL );
